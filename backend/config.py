@@ -12,6 +12,9 @@ class Config:
     CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
     CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", default=".\\uploads")
+    GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+    GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+    SECRET_KEY = os.getenv("SECRET_KEY")
 
 
 class DevelopmentConfig(Config):
