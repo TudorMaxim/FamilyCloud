@@ -6,6 +6,9 @@ class FamilyCloudAPI {
       method: 'POST',
       credentials: 'include',
       body: JSON.stringify(credentials),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
     const data = await res.json();
     if (!res.ok) {
@@ -27,6 +30,9 @@ class FamilyCloudAPI {
       method: 'POST',
       credentials: 'include',
       body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
     return await res.json();
   }

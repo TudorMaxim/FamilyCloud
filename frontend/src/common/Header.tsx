@@ -29,7 +29,7 @@ const Header = () => {
         </button>
         <div className="collapse navbar-collapse" id="headerLinks">
           {!user && (
-            <li className="navbar-nav ms-auto">
+            <ul className="navbar-nav ms-auto">
               <li className="nav-item">
                 <NavLink to="/login" className="nav-link">
                   Login
@@ -40,7 +40,7 @@ const Header = () => {
                   Register
                 </NavLink>
               </li>
-            </li>
+            </ul>
           )}
         </div>
       </div>

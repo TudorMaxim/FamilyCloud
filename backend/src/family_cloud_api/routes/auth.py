@@ -11,7 +11,7 @@ auth_blueprint = Blueprint("auth", __name__)
 @auth_blueprint.route("/login", methods=["POST"])
 def login():
     try:
-        credentials = LoginCredentials(**request.form.to_dict())
+        credentials = LoginCredentials(**request.get_json())
         user = User.query.filter_by(email=credentials.email).first()
 
         if not user:
@@ -46,7 +46,7 @@ def logout():
 @auth_blueprint.route("/register", methods=["POST"])
 def register():
     try:
-        data = RegistrationData(**request.form)
+        data = RegistrationData(**request.get_json())
         if User.query.filter_by(email=data.email).first():
             return (
                 jsonify({"error": f"User with email {data.email} already exists."}),
