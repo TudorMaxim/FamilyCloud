@@ -1,12 +1,14 @@
 import styled from 'styled-components';
 import { Link, NavLink } from 'react-router';
 import FamilyCloudIcon from '../assets/familyCloudIcon.svg';
+import { useAuth } from '../context/AuthContext';
 
 const Title = styled.span`
   margin: 0 8px;
 `;
 
 const Header = () => {
+  const { user } = useAuth();
   return (
     <nav className="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
       <div className="container-fluid">
@@ -26,18 +28,20 @@ const Header = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="headerLinks">
-          <li className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <NavLink to="/login" className="nav-link">
-                Login
-              </NavLink>
+          {!user && (
+            <li className="navbar-nav ms-auto">
+              <li className="nav-item">
+                <NavLink to="/login" className="nav-link">
+                  Login
+                </NavLink>
+              </li>
+              <li className="navbar-item">
+                <NavLink to="/register" className="nav-link">
+                  Register
+                </NavLink>
+              </li>
             </li>
-            <li className="navbar-item">
-              <NavLink to="/register" className="nav-link">
-                Register
-              </NavLink>
-            </li>
-          </li>
+          )}
         </div>
       </div>
     </nav>

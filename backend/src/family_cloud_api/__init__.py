@@ -22,7 +22,7 @@ def load_user(user_id: str):
 
 def create_app() -> Flask:
     app = Flask(__name__)
-    CORS(app, supports_credentials=True)
+    CORS(app, supports_credentials=True, origins=[config.CLIENT_APP_URL])
     app.config.from_object(config)
     register_api_routes(app)
     setup_celery()

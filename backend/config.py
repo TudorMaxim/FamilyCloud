@@ -15,6 +15,7 @@ class Config:
     GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
     SECRET_KEY = os.getenv("SECRET_KEY")
+    CLIENT_APP_URL = os.getenv("CLIENT_APP_URL", default="http://localhost:5173")
 
 
 class DevelopmentConfig(Config):
