@@ -1,14 +1,47 @@
 import styled from 'styled-components';
-import { Link, NavLink } from 'react-router';
+import { Link, NavLink, useNavigate } from 'react-router';
 import FamilyCloudIcon from '../assets/familyCloudIcon.svg';
 import { useAuth } from '../context/AuthContext';
+import familyCloudAPI from '../api';
 
 const Title = styled.span`
   margin: 0 8px;
 `;
 
+const UnauthenticatedLinks = () => (
+  <>
+    <li className="nav-item">
+      <NavLink to="/login" className="nav-link">
+        Login
+      </NavLink>
+    </li>
+    <li className="navbar-item">
+      <NavLink to="/register" className="nav-link">
+        Register
+      </NavLink>
+    </li>
+  </>
+);
+
+const AuthenticatedLinks = () => {
+  const navigate = useNavigate();
+  return (
+    <>
+      <li className="navbar-item">
+        <a
+          href="#"
+          className="nav-link"
+          onClick={() => familyCloudAPI.logout().then(() => navigate('/'))}
+        >
+          Logout
+        </a>
+      </li>
+    </>
+  );
+};
+
 const Header = () => {
-  const { user } = useAuth();
+  const { loading, user } = useAuth();
   return (
     <nav className="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
       <div className="container-fluid">
@@ -28,20 +61,10 @@ const Header = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="headerLinks">
-          {!user && (
-            <ul className="navbar-nav ms-auto">
-              <li className="nav-item">
-                <NavLink to="/login" className="nav-link">
-                  Login
-                </NavLink>
-              </li>
-              <li className="navbar-item">
-                <NavLink to="/register" className="nav-link">
-                  Register
-                </NavLink>
-              </li>
-            </ul>
-          )}
+          <ul className="navbar-nav ms-auto">
+            {!loading && !user && <UnauthenticatedLinks />}
+            {!loading && user && <AuthenticatedLinks />}
+          </ul>
         </div>
       </div>
     </nav>

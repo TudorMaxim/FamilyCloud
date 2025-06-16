@@ -11,8 +11,10 @@ class FamilyCloudAPI {
       },
     });
     const data = await res.json();
-    if (!res.ok) {
-      throw new Error();
+    if (res.status === 404 || res.status === 401) {
+      throw new Error(data.error);
+    } else if (!res.ok) {
+      throw new Error('Invalid credentials.');
     }
     return data;
   }

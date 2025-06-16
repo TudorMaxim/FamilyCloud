@@ -4,13 +4,13 @@ import { useAuth } from '../context/AuthContext';
 
 const Gallery = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { loading, user } = useAuth();
 
   useEffect(() => {
-    if (!user) {
+    if (!user && !loading) {
       navigate('/login');
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   return <h1>Gallery</h1>;
 };

@@ -33,7 +33,7 @@ def login():
 
         return jsonify({"error": "Invalid password"}), 401
     except ValidationError as e:
-        return jsonify({"error": e.errors()}), 401
+        return jsonify({"error": e.errors()}), 400
 
 
 @auth_blueprint.route("/logout", methods=["POST"])
@@ -61,7 +61,7 @@ def register():
         )
         return jsonify({"message": "Account created successfully."})
     except ValidationError as e:
-        return jsonify({"error": e.errors()}), 401
+        return jsonify({"error": e.errors()}), 400
 
 
 @auth_blueprint.route('/me', methods=['GET'])
@@ -71,6 +71,6 @@ def me():
             "email": current_user.email,
             "id": current_user.id,
             "firstName": current_user.first_name,
-            "lastName": current_user.lastName,
+            "lastName": current_user.last_name,
         }), 200
     return jsonify({"message": "Not authenticated"}), 401
