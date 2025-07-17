@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import familyCloudAPI from '../api';
-import { useAuth } from '../context/AuthContext';
+import useAuth from '../hooks/useAuth';
 import type { UserCredentials } from '../api/types';
 import Alert from '../common/Alert';
 import useAlert from '../hooks/useAlert';

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Link, NavLink, useNavigate } from 'react-router';
 import FamilyCloudIcon from '../assets/familyCloudIcon.svg';
-import { useAuth } from '../context/AuthContext';
+import useAuth from '../hooks/useAuth';
 import familyCloudAPI from '../api';
 
 const Title = styled.span`

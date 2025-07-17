@@ -3,7 +3,7 @@ import Header from './common/Header';
 import Gallery from './gallery/Gallery';
 import Login from './auth/Login';
 import Register from './auth/Register';
-import { AuthProvider } from './context/AuthContext';
+import AuthProvider from './context/AuthProvider';
 
 function App() {
   return (
