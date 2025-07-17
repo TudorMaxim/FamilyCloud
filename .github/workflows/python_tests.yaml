@@ -1,0 +1,52 @@
+name: Python Tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    strategy:
+      matrix:
+        python-version: [3.12]
+    
+    env:
+      FLASK_ENV: test
+      DATABASE_URL: "sqlite:///:memory:"
+      SECRET_KEY: "dummy-secret-key"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Cache pip downloads
+        uses: actions/cache@v3
+        id: pip-cache
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install pytest pytest-cov pytest-xdist
+          pip install -r requirements.txt
+
+      - name: Run pytest
+        working-directory: ./backend
+        run: pytest     
