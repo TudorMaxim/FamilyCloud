@@ -20,6 +20,7 @@ jobs:
     env:
       FLASK_ENV: test
       DATABASE_URL: "sqlite:///:memory:"
+      SECRET_KEY: "dummy-secret-key"
 
     steps:
       - uses: actions/checkout@v4
