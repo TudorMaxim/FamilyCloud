@@ -1,4 +1,3 @@
-# conftest.py
 import pytest
 
 from src.family_cloud_api import create_app

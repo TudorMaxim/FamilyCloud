@@ -16,6 +16,10 @@ jobs:
     strategy:
       matrix:
         python-version: [3.12]
+    
+    env:
+      FLASK_ENV: test
+      DATABASE_URL: "sqlite:///:memory:"
 
     steps:
       - uses: actions/checkout@v4
@@ -44,4 +48,4 @@ jobs:
 
       - name: Run pytest
         working-directory: ./backend
-        run: pytest -n auto --cov=. --cov-report=xml --junitxml=report.xml tests/
+        run: pytest     
