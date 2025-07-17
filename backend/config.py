@@ -26,4 +26,15 @@ class ProductionConfig(Config):
     DEBUG = False
 
 
-config = DevelopmentConfig if Config.FLASK_ENV == "development" else ProductionConfig
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    WTF_CSRF_ENABLED = False
+
+
+config = DevelopmentConfig
+
+if os.getenv("FLASK_ENV") == "production":
+    config = ProductionConfig
+elif os.getenv("FLASK_ENV") == "test":
+    config = TestConfig

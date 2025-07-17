@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from flask_login import login_required, login_user, logout_user, current_user
+from flask_login import current_user, login_required, login_user, logout_user
 from pydantic import ValidationError
 
 from src.family_cloud_api.models import User
@@ -59,18 +59,23 @@ def register():
             email=data.email,
             password=data.password,
         )
-        return jsonify({"message": "Account created successfully."})
+        return jsonify({"message": "Account created successfully"})
     except ValidationError as e:
         return jsonify({"error": e.errors()}), 400
 
 
-@auth_blueprint.route('/me', methods=['GET'])
+@auth_blueprint.route("/me", methods=["GET"])
 def me():
     if current_user.is_authenticated:
-        return jsonify({
-            "email": current_user.email,
-            "id": current_user.id,
-            "firstName": current_user.first_name,
-            "lastName": current_user.last_name,
-        }), 200
+        return (
+            jsonify(
+                {
+                    "email": current_user.email,
+                    "id": current_user.id,
+                    "firstName": current_user.first_name,
+                    "lastName": current_user.last_name,
+                }
+            ),
+            200,
+        )
     return jsonify({"message": "Not authenticated"}), 401
