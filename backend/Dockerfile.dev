@@ -1,0 +1,24 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+# Install system deps for psycopg2
+RUN apt-get update && apt-get install -y \
+    libpq-dev gcc netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --upgrade pip setuptools wheel
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Mount source in dev mode
+COPY . .
+
+ENV FLASK_APP=app.py
+ENV FLASK_ENV=development
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
