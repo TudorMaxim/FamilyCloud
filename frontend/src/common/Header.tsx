@@ -25,14 +25,24 @@ const UnauthenticatedLinks = () => (
 
 const AuthenticatedLinks = () => {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
+
+  const logout = async () => {
+    try {
+      const response = await familyCloudAPI.logout();
+      if (response.ok) {
+        setUser(null);
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   return (
     <>
       <li className="navbar-item">
-        <a
-          href="#"
-          className="nav-link"
-          onClick={() => familyCloudAPI.logout().then(() => navigate('/'))}
-        >
+        <a href="#" className="nav-link" onClick={logout}>
           Logout
         </a>
       </li>

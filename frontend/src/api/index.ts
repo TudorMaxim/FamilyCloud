@@ -24,11 +24,11 @@ class FamilyCloudAPI {
       method: 'POST',
       credentials: 'include',
     });
-    return await res.json();
+    return res;
   }
 
   async register(data: UserRegistrationData) {
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/login`, {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/register`, {
       method: 'POST',
       credentials: 'include',
       body: JSON.stringify(data),
