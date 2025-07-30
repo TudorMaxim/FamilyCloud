@@ -10,6 +10,15 @@ services:
     tty: true
     environment:
       - CHOKIDAR_USEPOLLING=true
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend/src
+          target: /app/src
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
   backend:
     build:
       context: ./backend
