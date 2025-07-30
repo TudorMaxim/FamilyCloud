@@ -36,7 +36,13 @@ class FamilyCloudAPI {
         'Content-Type': 'application/json',
       },
     });
-    return await res.json();
+    const responseData = await res.json();
+    if (res.status === 401) {
+      throw new Error(responseData.error);
+    } else if (!res.ok) {
+      throw new Error('Please specify a valid email and password longer than 5 characters.');
+    }
+    return responseData;
   }
 
   async getCurrentUser() {

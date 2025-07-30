@@ -10,6 +10,7 @@ const Register = () => {
   const { setUser } = useAuth();
   const navigate = useNavigate();
   const { alert, setAlert } = useAlert();
+  const { alert: registerSuccess, setAlert: setRegisterSuccess } = useAlert();
   const [loading, setLoading] = React.useState(false);
   const [userData, setUserData] = React.useState<UserRegistrationData>({
     email: '',
@@ -18,22 +19,26 @@ const Register = () => {
     lastName: '',
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    familyCloudAPI
-      .register(userData)
-      .then((user) => {
-        setUser(user);
-        navigate('/');
-      })
-      .catch((err) => setAlert(err.message))
-      .finally(() => setLoading(false));
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    try {
+      e.preventDefault();
+      setLoading(true);
+      let response = await familyCloudAPI.register(userData);
+      setRegisterSuccess(response.message);
+      response = await familyCloudAPI.login(userData);
+      setUser(response);
+      navigate('/');
+    } catch (err) {
+      setAlert(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
       <Alert type="danger" message={alert} />
+      <Alert type="success" message={registerSuccess} />
       <div className="d-flex justify-content-center align-items-center flex-grow-1">
         <form
           onSubmit={handleSubmit}
