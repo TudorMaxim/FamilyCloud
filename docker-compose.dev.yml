@@ -1,13 +1,4 @@
 services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./backend:/app
-    environment:
-      - FLASK_ENV=development
-  
   frontend:
     build:
       context: ./frontend
@@ -19,3 +10,27 @@ services:
     tty: true
     environment:
       - CHOKIDAR_USEPOLLING=true
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env
+
+  database:
+    env_file:
+      - ./backend/.env
+
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    env_file:
+      - ./backend/.env
+  
+  flower:
+    env_file:
+      - ./backend/.env
+
