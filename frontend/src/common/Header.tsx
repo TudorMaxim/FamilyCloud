@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router';
 import FamilyCloudIcon from '../assets/familyCloudIcon.svg';
 import useAuth from '../hooks/useAuth';
 import familyCloudAPI from '../api';
+import UploadButton from '../features/uploads/UploadButton';
 
 const Title = styled.span`
   margin: 0 8px;
@@ -42,6 +43,9 @@ const AuthenticatedLinks = () => {
   return (
     <>
       <li className="navbar-item">
+        <UploadButton />
+      </li>
+      <li className="navbar-item d-flex align-items-center">
         <a href="#" className="nav-link" onClick={logout}>
           Logout
         </a>
