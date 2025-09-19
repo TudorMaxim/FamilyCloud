@@ -1,16 +1,18 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
-import familyCloudAPI from '../api';
-import useAuth from '../hooks/useAuth';
-import type { UserCredentials } from '../api/types';
-import Alert from '../common/Alert';
-import useAlert from '../hooks/useAlert';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState, AppDispatch } from '../../store';
+import type { UserCredentials } from '../../api/types';
+import familyCloudAPI from '../../api';
+import Alert from '../../common/Alert';
+import useAlert from '../../hooks/useAlert';
+import { setUser, setLoading } from './slice';
 
 const Login = () => {
-  const { setUser } = useAuth();
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading, authenticated } = useSelector((state: RootState) => state.auth);
   const { alert, setAlert } = useAlert();
-  const [loading, setLoading] = React.useState(false);
   const [credentials, setCredentials] = React.useState<UserCredentials>({
     email: '',
     password: '',
@@ -18,16 +20,22 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
+    dispatch(setLoading(true));
     familyCloudAPI
       .login(credentials)
       .then((user) => {
-        setUser(user);
+        dispatch(setUser(user));
         navigate('/');
       })
       .catch((err) => setAlert(err.message))
-      .finally(() => setLoading(false));
+      .finally(() => dispatch(setLoading(false)));
   };
+
+  React.useEffect(() => {
+    if (authenticated) {
+      navigate('/');
+    }
+  }, [authenticated, navigate]);
 
   return (
     <>
