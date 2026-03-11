@@ -1,8 +1,13 @@
 import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
+import type { RootState, AppDispatch } from '../store';
+import { setUser } from '../features/auth/slice';
 import { Link, NavLink, useNavigate } from 'react-router';
 import FamilyCloudIcon from '../assets/familyCloudIcon.svg';
-import useAuth from '../hooks/useAuth';
 import familyCloudAPI from '../api';
+import UploadButton from '../features/uploads/UploadButton';
+import { useSelector } from 'react-redux';
+import useCurrentUser from '../hooks/useCurrentUser';
 
 const Title = styled.span`
   margin: 0 8px;
@@ -25,13 +30,12 @@ const UnauthenticatedLinks = () => (
 
 const AuthenticatedLinks = () => {
   const navigate = useNavigate();
-  const { setUser } = useAuth();
-
+  const dispatch = useDispatch<AppDispatch>();
   const logout = async () => {
     try {
       const response = await familyCloudAPI.logout();
       if (response.ok) {
-        setUser(null);
+        dispatch(setUser(null));
         navigate('/');
       }
     } catch (error) {
@@ -42,6 +46,9 @@ const AuthenticatedLinks = () => {
   return (
     <>
       <li className="navbar-item">
+        <UploadButton />
+      </li>
+      <li className="navbar-item d-flex align-items-center">
         <a href="#" className="nav-link" onClick={logout}>
           Logout
         </a>
@@ -51,7 +58,9 @@ const AuthenticatedLinks = () => {
 };
 
 const Header = () => {
-  const { loading, user } = useAuth();
+  const { loading, user } = useSelector((state: RootState) => state.auth);
+  useCurrentUser();
+
   return (
     <nav className="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
       <div className="container-fluid">

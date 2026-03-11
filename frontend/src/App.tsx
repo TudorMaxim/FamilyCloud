@@ -1,14 +1,15 @@
 import { BrowserRouter, Routes, Route } from 'react-router';
+import { Provider } from 'react-redux';
 import Header from './common/Header';
 import Gallery from './gallery/Gallery';
-import Login from './auth/Login';
-import Register from './auth/Register';
-import AuthProvider from './context/AuthProvider';
+import Login from './features/auth/Login';
+import Register from './features/auth/Register';
+import { store } from './store';
 
 function App() {
   return (
     <div className="d-flex flex-column min-vh-100">
-      <AuthProvider>
+      <Provider store={store}>
         <BrowserRouter>
           <Header />
           <main className="container-fluid d-flex flex-grow-1">
@@ -19,7 +20,7 @@ function App() {
             </Routes>
           </main>
         </BrowserRouter>
-      </AuthProvider>
+      </Provider>
     </div>
   );
 }

@@ -1,17 +1,19 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
-import familyCloudAPI from '../api';
-import useAuth from '../hooks/useAuth';
-import useAlert from '../hooks/useAlert';
-import Alert from '../common/Alert';
-import type { UserRegistrationData } from '../api/types';
+import familyCloudAPI from '../../api';
+import useAlert from '../../hooks/useAlert';
+import Alert from '../../common/Alert';
+import type { UserRegistrationData } from '../../api/types';
+import type { RootState, AppDispatch } from '../../store';
+import { setUser, setLoading } from './slice';
 
 const Register = () => {
-  const { setUser } = useAuth();
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading, authenticated } = useSelector((state: RootState) => state.auth);
   const { alert, setAlert } = useAlert();
   const { alert: registerSuccess, setAlert: setRegisterSuccess } = useAlert();
-  const [loading, setLoading] = React.useState(false);
   const [userData, setUserData] = React.useState<UserRegistrationData>({
     email: '',
     password: '',
@@ -22,18 +24,24 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
-      setLoading(true);
+      dispatch(setLoading(true));
       let response = await familyCloudAPI.register(userData);
       setRegisterSuccess(response.message);
       response = await familyCloudAPI.login(userData);
-      setUser(response);
+      dispatch(setUser(response));
       navigate('/');
     } catch (err) {
       setAlert(err.message);
     } finally {
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
+
+  React.useEffect(() => {
+    if (authenticated) {
+      navigate('/');
+    }
+  }, [authenticated, navigate]);
 
   return (
     <>

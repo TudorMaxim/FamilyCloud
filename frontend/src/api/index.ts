@@ -53,6 +53,18 @@ class FamilyCloudAPI {
     if (!res.ok) return null;
     return await res.json();
   }
+
+  async upload(formData: FormData) {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+    });
+    if (!res.ok) {
+      throw new Error('Upload failed.');
+    }
+    return await res.json();
+  }
 }
 
 const familyCloudAPI = new FamilyCloudAPI();
