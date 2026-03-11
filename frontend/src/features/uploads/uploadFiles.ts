@@ -12,11 +12,17 @@ const uploadFiles = async (tasks: FileUploadTask[], dispatch: AppDispatch) => {
 
     await Promise.all(
       batch.map(async (task) => {
+        // Skip invalid files
+        if (task.validationError) {
+          return;
+        }
+
         const taskId = `${task.name}_${Date.now()}`;
         dispatch(setTaskId({ fileName: task.name, taskId }));
 
         const eventSource = new EventSource(
-          `${import.meta.env.VITE_BACKEND_URL}/progress/${taskId}`
+          `${import.meta.env.VITE_BACKEND_URL}/api/progress/${taskId}`,
+          { withCredentials: true }
         );
         eventSource.onmessage = (event: MessageEvent) => {
           const data = JSON.parse(event.data);
@@ -29,13 +35,16 @@ const uploadFiles = async (tasks: FileUploadTask[], dispatch: AppDispatch) => {
           const start = chunkIndex * CHUNK_SIZE;
           const end = Math.min(task.size, start + CHUNK_SIZE);
           const file = getFile(task.name);
-          const chunk = file?.slice(start, end);
+          // Preserve file type when slicing to maintain MIME type info
+          const chunk = file?.slice(start, end, file?.type);
 
           const formData = new FormData();
-          formData.append('file', chunk ?? '');
+          // Include original filename so backend gets correct filename, not "blob"
+          formData.append('file', chunk ?? '', task.name);
           formData.append('chunk_index', chunkIndex.toString());
           formData.append('total_chunks', totalChunks.toString());
           formData.append('task_id', taskId);
+          formData.append('media_type', task.mediaType);
 
           await familyCloudAPI.upload(formData);
         }

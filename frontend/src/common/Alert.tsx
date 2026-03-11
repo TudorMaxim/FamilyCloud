@@ -10,7 +10,7 @@ const Container = styled.div`
 `;
 
 type AlertProps = {
-  type: 'primary' | 'success' | 'danger' | 'warning';
+  type: 'primary' | 'success' | 'danger' | 'warning' | 'error';
   message: string | null;
 };
 
@@ -18,9 +18,12 @@ const Alert = ({ type, message }: AlertProps) => {
   if (!message) {
     return null;
   }
+  // Map 'error' to Bootstrap 'danger' class
+  const alertType = type === 'error' ? 'danger' : type;
+  
   return (
     <Container>
-      <span role="alert" className={`alert alert-${type}`}>
+      <span role="alert" className={`alert alert-${alertType}`}>
         {message}
       </span>
     </Container>

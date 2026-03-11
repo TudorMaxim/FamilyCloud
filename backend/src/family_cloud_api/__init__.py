@@ -30,7 +30,10 @@ def create_app() -> Flask:
     login_manager.init_app(app)
     oauth.init_app(app)
 
-    os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)  # Ensure the upload folder exists
+    os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)  
+    os.makedirs(config.CHUNKS_FOLDER, exist_ok=True)
+    os.makedirs(config.THUMBNAILS_FOLDER, exist_ok=True)
+    os.makedirs(config.PROCESSED_FOLDER, exist_ok=True)
 
     db.init_app(app)
     import src.family_cloud_api.models  # Register models for alembic to handle migrations

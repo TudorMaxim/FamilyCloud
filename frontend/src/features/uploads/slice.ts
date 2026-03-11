@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { MediaType, ValidationError } from './validation';
 
 export type FileMeta = {
   name: string;
@@ -13,6 +14,8 @@ export type FileUploadTask = FileMeta & {
   taskId: string | null;
   totalChunks?: number;
   uploadedChunks?: number;
+  mediaType: MediaType;
+  validationError?: ValidationError;
 };
 
 type UploadState = {
@@ -51,8 +54,18 @@ const uploadSlice = createSlice({
       state.tasks = [];
       state.overallProgress = 0;
     },
+    removeFile: (state, action: PayloadAction<string>) => {
+      state.tasks = state.tasks.filter((t) => t.name !== action.payload);
+      const totalTasks = state.tasks.length;
+      if (totalTasks === 0) {
+        state.overallProgress = 0;
+      } else {
+        const sumProgress = state.tasks.reduce((sum, t) => sum + t.progress, 0);
+        state.overallProgress = Math.round(sumProgress / totalTasks);
+      }
+    },
   },
 });
 
-export const { addFiles, setTaskId, updateProgress, resetUploads } = uploadSlice.actions;
+export const { addFiles, setTaskId, updateProgress, resetUploads, removeFile } = uploadSlice.actions;
 export default uploadSlice.reducer;
