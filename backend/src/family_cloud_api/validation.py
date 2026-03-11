@@ -2,9 +2,13 @@
 
 from config import config
 
-VALID_PHOTO_EXTENSIONS = {ext.lower() for ext in config.FILE_VALIDATION_CONFIG["photos"]["extensions"]}
+VALID_PHOTO_EXTENSIONS = {
+    ext.lower() for ext in config.FILE_VALIDATION_CONFIG["photos"]["extensions"]
+}
 VALID_PHOTO_MIME_TYPES = set(config.FILE_VALIDATION_CONFIG["photos"]["mime_types"])
-VALID_VIDEO_EXTENSIONS = {ext.lower() for ext in config.FILE_VALIDATION_CONFIG["videos"]["extensions"]}
+VALID_VIDEO_EXTENSIONS = {
+    ext.lower() for ext in config.FILE_VALIDATION_CONFIG["videos"]["extensions"]
+}
 VALID_VIDEO_MIME_TYPES = set(config.FILE_VALIDATION_CONFIG["videos"]["mime_types"])
 
 MAX_PHOTO_SIZE = config.FILE_VALIDATION_CONFIG["photos"]["max_size_bytes"]
@@ -33,7 +37,9 @@ def detect_media_type(filename: str, mime_type: str = "") -> str:
     return "invalid"
 
 
-def validate_file_upload(filename: str, file_size: int, mime_type: str = "") -> tuple[bool, str | None, str | None]:
+def validate_file_upload(
+    filename: str, file_size: int, mime_type: str = ""
+) -> tuple[bool, str | None, str | None]:
     """
     Validate file for upload.
     Returns: (is_valid, error_message, media_type)
@@ -47,12 +53,20 @@ def validate_file_upload(filename: str, file_size: int, mime_type: str = "") -> 
         if file_size > MAX_PHOTO_SIZE:
             max_size_mb = MAX_PHOTO_SIZE / (1024 * 1024)
             file_size_mb = file_size / (1024 * 1024)
-            return False, f"Photo too large: {file_size_mb:.2f}MB (max {max_size_mb:.0f}MB)", None
+            return (
+                False,
+                f"Photo too large: {file_size_mb:.2f}MB (max {max_size_mb:.0f}MB)",
+                None,
+            )
         return True, None, "photo"
 
     else:  # video
         if file_size > MAX_VIDEO_SIZE:
             max_size_mb = MAX_VIDEO_SIZE / (1024 * 1024)
             file_size_mb = file_size / (1024 * 1024)
-            return False, f"Video too large: {file_size_mb:.2f}MB (max {max_size_mb:.0f}MB)", None
+            return (
+                False,
+                f"Video too large: {file_size_mb:.2f}MB (max {max_size_mb:.0f}MB)",
+                None,
+            )
         return True, None, "video"

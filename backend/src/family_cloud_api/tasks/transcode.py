@@ -2,15 +2,15 @@
 Video transcoding task to convert videos to MP4 format
 """
 
+import json
+import logging
 import os
 import subprocess
-import logging
-import json
 
+from config import config
 from src.family_cloud_api.celery import celery
 from src.family_cloud_api.database import db
 from src.family_cloud_api.models import File
-from config import config
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +24,7 @@ FFMPEG_AUDIO_BITRATE = "128k"
 def get_app():
     """Get Flask app instance for celery tasks"""
     from app import family_cloud_app
+
     return family_cloud_app
 
 
@@ -32,14 +33,14 @@ def transcode_video(self, file_path: str, file_id: int, task_id: str = None):
     """
     Transcode video to MP4 H.264 format for web compatibility.
     Updates File record with processed path and duration.
-    
+
     Args:
         file_path: Path to original video file
         file_id: ID of File record in database
         task_id: Upload task ID for status tracking
     """
-    from src.family_cloud_api.status import get_status, UploadStatus
-    
+    from src.family_cloud_api.status import UploadStatus, get_status
+
     try:
         app = get_app()
         with app.app_context():
@@ -51,7 +52,7 @@ def transcode_video(self, file_path: str, file_id: int, task_id: str = None):
                     if status:
                         status.status = UploadStatus.COMPLETE
                         status.save()
-                return {'status': 'error', 'message': 'File record not found'}
+                return {"status": "error", "message": "File record not found"}
 
             # Generate output filename
             base_name = os.path.splitext(os.path.basename(file_path))[0]
@@ -76,12 +77,10 @@ def transcode_video(self, file_path: str, file_id: int, task_id: str = None):
                     status.status = UploadStatus.COMPLETE
                     status.save()
 
-            logger.info(f"Video transcoded for file {file_id}: {output_path} (duration: {duration}s)")
-            return {
-                'status': 'success',
-                'file_path': output_path,
-                'duration': duration
-            }
+            logger.info(
+                f"Video transcoded for file {file_id}: {output_path} (duration: {duration}s)"
+            )
+            return {"status": "success", "file_path": output_path, "duration": duration}
 
     except Exception as e:
         logger.exception(f"Error transcoding video for file {file_id}: {str(e)}")
@@ -91,7 +90,7 @@ def transcode_video(self, file_path: str, file_id: int, task_id: str = None):
                 status.status = UploadStatus.ERROR
                 status.error = str(e)
                 status.save()
-        return {'status': 'error', 'message': str(e)}
+        return {"status": "error", "message": str(e)}
 
 
 def _transcode_with_ffmpeg(input_path: str, output_path: str):
@@ -101,16 +100,23 @@ def _transcode_with_ffmpeg(input_path: str, output_path: str):
     """
     try:
         cmd = [
-            'ffmpeg',
-            '-i', input_path,
-            '-c:v', FFMPEG_VIDEO_CODEC,  # H.264
-            '-b:v', FFMPEG_VIDEO_BITRATE,
-            '-preset', 'medium',  # Balance between speed and compression
-            '-c:a', FFMPEG_AUDIO_CODEC,  # AAC audio
-            '-b:a', FFMPEG_AUDIO_BITRATE,
-            '-movflags', '+faststart',  # Enable streaming (seek before download finishes)
-            '-y',  # Overwrite output file
-            output_path
+            "ffmpeg",
+            "-i",
+            input_path,
+            "-c:v",
+            FFMPEG_VIDEO_CODEC,  # H.264
+            "-b:v",
+            FFMPEG_VIDEO_BITRATE,
+            "-preset",
+            "medium",  # Balance between speed and compression
+            "-c:a",
+            FFMPEG_AUDIO_CODEC,  # AAC audio
+            "-b:a",
+            FFMPEG_AUDIO_BITRATE,
+            "-movflags",
+            "+faststart",  # Enable streaming (seek before download finishes)
+            "-y",  # Overwrite output file
+            output_path,
         ]
 
         logger.info(f"Starting transcode: {input_path} -> {output_path}")
@@ -137,10 +143,14 @@ def _get_video_duration(video_path: str) -> int:
     """Extract video duration in seconds using ffprobe"""
     try:
         cmd = [
-            'ffprobe', '-v', 'error',
-            '-show_entries', 'format=duration',
-            '-of', 'default=noprint_wrappers=1:nokey=1',
-            video_path
+            "ffprobe",
+            "-v",
+            "error",
+            "-show_entries",
+            "format=duration",
+            "-of",
+            "default=noprint_wrappers=1:nokey=1",
+            video_path,
         ]
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         duration = float(result.stdout.strip())

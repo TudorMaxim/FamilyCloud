@@ -30,7 +30,7 @@ def create_app() -> Flask:
     login_manager.init_app(app)
     oauth.init_app(app)
 
-    os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)  
+    os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
     os.makedirs(config.CHUNKS_FOLDER, exist_ok=True)
     os.makedirs(config.THUMBNAILS_FOLDER, exist_ok=True)
     os.makedirs(config.PROCESSED_FOLDER, exist_ok=True)
